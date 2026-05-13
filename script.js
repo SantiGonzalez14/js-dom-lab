@@ -15,30 +15,37 @@ const CREW = {
     name: "Dominic Toretto",
     bio: "Street racer. Family man. Drives a 1970 Dodge Charger R/T.",
     photo:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Vin_Diesel_by_Gage_Skidmore.jpg/440px-Vin_Diesel_by_Gage_Skidmore.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/a/a0/VinDieselMarch09.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
     stats: ["Driving: 99", "Loyalty: 100", "Quarter Mile: 9.4s"],
   },
   brian: {
     name: "Brian O'Conner",
     bio: "Ex-FBI. Adrenaline junkie. Drives a Nissan Skyline GT-R R34.",
     photo:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Paul_Walker_Fast_Five_premiere.jpg/440px-Paul_Walker_Fast_Five_premiere.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/9/91/PaulWalkerEdit-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
     stats: ["Driving: 96", "Charm: 95", "Quarter Mile: 9.7s"],
   },
   letty: {
     name: "Letty Ortiz",
     bio: "Mechanic. Brawler. Heart of the crew. Drives a Plymouth Barracuda.",
     photo:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Michelle_Rodriguez_2019_by_Glenn_Francis.jpg/440px-Michelle_Rodriguez_2019_by_Glenn_Francis.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/b/b0/MichelleRodriguezDec09.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
     stats: ["Driving: 94", "Toughness: 99", "Quarter Mile: 9.9s"],
   },
   hobbs: {
     name: "Luke Hobbs",
     bio: "DSS Agent. The size of a small mountain. Drives a Gurkha LAPV.",
     photo:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Dwayne_Johnson_2%2C_2013.jpg/440px-Dwayne_Johnson_2%2C_2013.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f1/Dwayne_Johnson_2%2C_2013.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
     stats: ["Strength: 100", "Driving: 88", "Intimidation: 99"],
   },
+  han: {
+    name: "Han Lue",
+    bio: "Drift king with a calm attitude. Loves snacks, street racing, and precision driving. One of the crew's smoothest operators.",
+    photo:
+      "https://upload.wikimedia.org/wikipedia/en/3/3a/Han_Lue.jpg",
+    stats: ["Drifting: 98", "Style: 100", "Calmness: 95"]
+  }
 };
 
 
@@ -52,27 +59,34 @@ const CREW = {
 // 1a. Use document.getElementById to grab the element with id "page-title".
 //     Save it in a const called pageTitle. Then console.log(pageTitle).
 // TODO 1a:
-
+const pageTitle = document.getElementById("page-title");
+console.log(pageTitle);
 
 // 1b. Use document.getElementsByClassName to grab all elements with the
 //     class "stat". Save it in a const called statList.
 //     Then console.log statList AND console.log Array.isArray(statList).
 //     (Spoiler from the slides: it's NOT a real array.)
 // TODO 1b:
-
+const statList = document.getElementsByClassName("stat");
+console.log(statList);
+console.log(Array.isArray(statList));
 
 // 1c. Use document.getElementsByTagName to grab every <button> on the page.
 //     Save it in a const called allButtons. Then console.log how many
 //     buttons there are using allButtons.length.
 // TODO 1c:
-
+const allButtons = document.getElementsByTagName("button");
+console.log(allButtons.length);
 
 // 1d. Use document.querySelector to grab the FIRST element matching
 //     ".switch-btn" (a CSS selector). Save it in a const called firstSwitchBtn.
 //     Then use document.querySelectorAll to grab ALL of them — save that in
 //     a const called allSwitchBtns. console.log both.
 // TODO 1d:
-
+const firstSwitchBtn = document.querySelector(".switch-btn");
+const allSwitchBtns = document.querySelectorAll(".switch-btn");
+console.log(firstSwitchBtn);
+console.log(allSwitchBtns);
 
 /* =========================================================
    PART 2 — TURN A NODELIST INTO A REAL ARRAY
@@ -84,7 +98,9 @@ const CREW = {
 //    Then call .forEach() on statArray and console.log each stat element's
 //    .innerText. (.forEach would NOT work on the original NodeList!)
 // TODO 2:
-
+const statArray = [...statList];
+statArray.forEach((element) => console.log(element.innerText));
+console.log(statArray);
 
 /* =========================================================
    PART 3 — CHANGING THE DOM (CHARACTER SWITCHER)
@@ -117,7 +133,23 @@ const CREW = {
 //      document.getElementById("stats").appendChild(li);
 //
 // TODO 3:
+function showMember(key){
+  const member = CREW[key];
 
+  document.getElementById("member-name").innerText = member.name;
+  document.querySelector(".bio").innerText = member.bio;
+  document.getElementById("member-photo").src = member.photo;
+  document.getElementById("stats").innerHTML = "";
+
+  member.stats.forEach((stat) => {
+    const li = document.createElement("li");
+
+    li.className = "stat";
+    li.innerText = stat;
+
+    document.getElementById("stats").appendChild(li);
+  })
+}
 
 /* =========================================================
    PART 4 — EVENT LISTENERS
@@ -134,6 +166,16 @@ const CREW = {
 //           In JS: btn.dataset.member  // "dom"
 // TODO 4a:
 
+allSwitchBtns.forEach((btn) => {
+  if(btn.dataset.member == ""){
+    return;
+  }
+
+  btn.addEventListener("click", () => {
+    const memberKey = btn.dataset.member;
+    showMember(memberKey);
+  });
+});
 
 // 4b. Wire up the "Remove from Crew" button (id="remove-member-btn").
 //     When clicked, remove the entire #crew-card from the page.
@@ -167,7 +209,34 @@ const CREW = {
 //      li.appendChild(deleteBtn);
 //
 // TODO 5:
+document.getElementById("add-member-form").addEventListener("submit", (event) => {
 
+  event.preventDefault();
+
+  const memberName = document.getElementById("new-name").value;
+  if(memberName.length == "") return;
+
+  const memberRide = document.getElementById("new-ride").value;
+  if(memberRide.length == "") return;
+
+  const li = document.createElement("li");
+  li.innerText = `${memberName} drives a ${memberRide}`;
+  li.innerHTML += ` <em>(added on ${new Date().toLocaleDateString()})</em>`;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-btn";
+  deleteBtn.innerText = "Remove";
+  deleteBtn.onclick = () => {
+    li.parentNode.removeChild(li);
+  }
+
+  li.appendChild(deleteBtn);
+
+  document.getElementById("recruits").appendChild(li);
+
+  document.getElementById("new-name").value = "";
+  document.getElementById("new-ride").value = "";
+})
 
 /* =========================================================
    PART 6 — CHANGING STYLES
@@ -183,6 +252,35 @@ const CREW = {
 //    Use:  document.getElementById("crew-card").style.backgroundColor = "..."
 // TODO 6:
 
+const crewCard = document.getElementById("crew-card");
+const colorControlsElements = document.getElementById("color-controls").children;
+const colorControlButtons = Array.from(colorControlsElements).filter((child) => child.tagName === "BUTTON");
+
+colorControlButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const color = btn.id;
+
+    switch(color){
+      case "reset-btn":
+        crewCard.style.backgroundColor = "#2a2a2a";
+        break;  
+      case "blue-btn":
+        crewCard.style.backgroundColor = "#1a2a5a";
+        break;
+      case "red-btn":
+        crewCard.style.backgroundColor = "#5a1a1a";
+        break;
+    }
+  });
+})
+
+const surpriseBtn = document.getElementById("surprise-btn");
+
+surpriseBtn.addEventListener("click", () => {
+  const crewKeys = Object.keys(CREW)
+  const randomKey = crewKeys[Math.floor(Math.random() * crewKeys.length)];
+  showMember(randomKey);
+})
 
 /* =========================================================
    STRETCH GOALS (optional)
